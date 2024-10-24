@@ -38,12 +38,55 @@ class SocialNetwork {
     for(let i = 1; i < this.currentID; i++){
       if(this.follows[i].has(userID)) followers.add(i)
     }
-  
+
     return followers
   }
 
+  _convertToArray(list){
+    const result = [];
+    list.forEach((val) => result.push(val))
+    return result
+  }
+
   getRecommendedFollows(userID, degrees) {
-    // Your code here
+
+    let follows = this._convertToArray(this.getFollows(userID))
+    const queue = [[...follows]]
+
+    
+
+
+    const recommended = [];
+    const visited = new Set()
+
+    while(queue.length > 0){
+      let path = queue.shift()
+
+      let currentNode = path[path.length - 1]
+      
+      if(!visited.has(currentNode)){
+        visited.add(currentNode)
+
+        if(path.length > 1 && path.length <= degrees + 1){
+          if(currentNode === userID) continue
+          recommended.push(currentNode)
+        }
+
+        let followers = this._convertToArray(this.getFollows(currentNode))
+        for(let i = 0; i < followers.length; i++){
+          let pathCopy = [...path];
+          pathCopy.push(followers[i])
+          queue.push(pathCopy)
+        }
+        
+
+
+      } 
+
+    }
+  
+    return recommended
+  
   }
 }
 
